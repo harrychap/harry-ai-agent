@@ -1,0 +1,386 @@
+openapi: 3.1.0
+info:
+  title: AI Agent Shopping List API
+  description: |
+    Backend API for the AI Agent Shopping List boilerplate.
+    Provides endpoints for chat interaction and shopping list management.
+  version: 1.0.0
+  contact:
+    name: Harry AI Agent
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local development server
+
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Health check endpoint
+      description: Returns the health status of the backend service (FR-006)
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /chat:
+    post:
+      operationId: sendMessage
+      summary: Send a chat message
+      description: |
+        Sends a user message to the AI agent and receives a response.
+        Creates a new session if sessionId is not provided. (FR-002, FR-003)
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '200':
+          description: Message processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid request (empty message)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /chat/{sessionId}/history:
+    get:
+      operationId: getChatHistory
+      summary: Get chat history for a session
+      description: Returns all messages in a chat session (FR-010)
+      tags:
+        - Chat
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Chat history retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatHistoryResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /items:
+    get:
+      operationId: listItems
+      summary: List all shopping items
+      description: Returns all items in the shopping list (FR-005)
+      tags:
+        - Shopping Items
+      responses:
+        '200':
+          description: List of shopping items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingItemList'
+
+    post:
+      operationId: addItem
+      summary: Add a shopping item
+      description: |
+        Adds a new item to the shopping list.
+        If item with same name exists, increments quantity. (FR-005, Clarification)
+      tags:
+        - Shopping Items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddItemRequest'
+      responses:
+        '200':
+          description: Item added or quantity incremented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingItem'
+        '400':
+          description: Invalid request (empty name)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /items/{itemId}:
+    delete:
+      operationId: removeItem
+      summary: Remove a shopping item
+      description: |
+        Removes an item from the shopping list.
+        Decrements quantity by 1; deletes if quantity becomes 0. (FR-005)
+      tags:
+        - Shopping Items
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Item removed or quantity decremented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoveItemResponse'
+        '404':
+          description: Item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      operationId: updateItem
+      summary: Update a shopping item
+      description: Updates the quantity of an existing item
+      tags:
+        - Shopping Items
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateItemRequest'
+      responses:
+        '200':
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingItem'
+        '404':
+          description: Item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: [healthy, unhealthy]
+          example: healthy
+        timestamp:
+          type: string
+          format: date-time
+        database:
+          type: string
+          enum: [connected, disconnected]
+          example: connected
+
+    SendMessageRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 10000
+          description: The user's message to send to the AI agent
+          example: "Add milk to my shopping list"
+        sessionId:
+          type: string
+          format: uuid
+          description: Optional session ID. Creates new session if omitted.
+
+    ChatResponse:
+      type: object
+      required:
+        - sessionId
+        - userMessage
+        - assistantMessage
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        userMessage:
+          $ref: '#/components/schemas/ChatMessage'
+        assistantMessage:
+          $ref: '#/components/schemas/ChatMessage'
+
+    ChatHistoryResponse:
+      type: object
+      required:
+        - sessionId
+        - messages
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+
+    ChatMessage:
+      type: object
+      required:
+        - id
+        - role
+        - content
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ShoppingItem:
+      type: object
+      required:
+        - id
+        - name
+        - quantity
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 255
+          example: "Milk"
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ShoppingItemList:
+      type: object
+      required:
+        - items
+        - count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShoppingItem'
+        count:
+          type: integer
+          description: Total number of items
+
+    AddItemRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Name of the item to add
+          example: "Bread"
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+          description: Quantity to add (defaults to 1)
+
+    UpdateItemRequest:
+      type: object
+      required:
+        - quantity
+      properties:
+        quantity:
+          type: integer
+          minimum: 1
+          description: New quantity for the item
+
+    RemoveItemResponse:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum: [decremented, deleted]
+          description: What happened to the item
+        item:
+          $ref: '#/components/schemas/ShoppingItem'
+          description: Updated item (only if decremented, null if deleted)
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - timestamp
+      properties:
+        error:
+          type: string
+          example: "BAD_REQUEST"
+        message:
+          type: string
+          example: "Message cannot be empty"
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+          example: "/api/chat"
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: Chat
+    description: Chat interaction with AI agent
+  - name: Shopping Items
+    description: Shopping list CRUD operations
