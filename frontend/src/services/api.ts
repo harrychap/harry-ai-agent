@@ -68,7 +68,6 @@ import type {
   AddItemRequest,
   UpdateItemRequest,
   RemoveItemResponse,
-  HealthResponse,
   ErrorResponse,
 } from '../types/api';
 
@@ -95,12 +94,6 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(response.status, errorData);
   }
   return response.json();
-}
-
-// Health API
-export async function checkHealth(): Promise<HealthResponse> {
-  const response = await fetch(`${API_BASE}/health`);
-  return handleResponse<HealthResponse>(response);
 }
 
 // Chat API

@@ -30,11 +30,17 @@ server:
 logging:
   level:
     root: INFO
-    com.example.agent: DEBUG
+    com.example.agent: INFO
     org.springframework.web: INFO
-    org.hibernate.SQL: DEBUG
+    org.hibernate.SQL: INFO
 
-anthropic:
-  api-key: ${ANTHROPIC_API_KEY:}
-  model: claude-sonnet-4-20250514
-  max-tokens: 1024
+# Spring AI Anthropic Configuration
+# See: https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html
+spring.ai:
+  anthropic:
+    api-key: ${ANTHROPIC_API_KEY:}
+    chat:
+      options:
+        model: claude-sonnet-4-20250514
+        max-tokens: 1024
+        temperature: 0.7

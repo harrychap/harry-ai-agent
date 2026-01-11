@@ -5,39 +5,49 @@
 
 ## Technology Decisions
 
-### 1. Anthropic SDK for Java/Kotlin
+### 1. Spring AI with Anthropic
 
-**Decision**: Use official `com.anthropic:anthropic-java:2.11.1`
+**Decision**: Use `org.springframework.ai:spring-ai-starter-model-anthropic:1.1.2`
 
 **Rationale**:
-- Official SDK maintained by Anthropic with full API coverage
-- Native Java SDK works seamlessly with Kotlin (no Kotlin-specific SDK needed)
-- Supports both synchronous and asynchronous execution patterns
-- Built-in streaming support for longer responses
-- Uses Jackson for JSON serialization (compatible with Spring Boot defaults)
+- Official Spring integration for AI models including Anthropic Claude
+- Provides higher-level abstractions (ChatClient, ChatModel) for easier integration
+- Auto-configuration with Spring Boot for minimal setup
+- Built-in support for function calling, streaming, and structured output
+- Consistent API across different AI providers (easy to switch models)
+- Native Spring ecosystem integration (dependency injection, properties, etc.)
 
 **Alternatives Considered**:
-- HTTP client directly → Rejected: More boilerplate, no type safety, manual error handling
-- Community Kotlin wrappers → Rejected: Less maintained than official SDK
+- Direct Anthropic SDK → Rejected: More boilerplate, less Spring-idiomatic
+- HTTP client directly → Rejected: No type safety, manual error handling
 
 **Gradle Dependency**:
 ```kotlin
-implementation("com.anthropic:anthropic-java:2.11.1")
+implementation("org.springframework.ai:spring-ai-starter-model-anthropic:1.1.2")
 ```
 
-**Configuration Pattern**:
+**Configuration (application.yml)**:
+```yaml
+spring.ai:
+  anthropic:
+    api-key: ${ANTHROPIC_API_KEY}
+    chat:
+      options:
+        model: claude-sonnet-4-20250514
+        max-tokens: 1024
+```
+
+**Usage Pattern**:
 ```kotlin
-// Recommended: Use environment variable ANTHROPIC_API_KEY
-val client = AnthropicOkHttpClient.fromEnv()
-
-// Basic usage
-val params = MessageCreateParams.builder()
-    .maxTokens(1024L)
-    .addUserMessage("Hello, Claude")
-    .model(Model.CLAUDE_3_7_SONNET_LATEST)
-    .build()
-
-val message = client.messages().create(params)
+@Service
+class AgentService(private val chatClient: ChatClient) {
+    fun chat(message: String): String {
+        return chatClient.prompt()
+            .user(message)
+            .call()
+            .content() ?: "Error"
+    }
+}
 ```
 
 ---
@@ -168,7 +178,7 @@ allOpen {
 | Backend Language | Kotlin | 2.1.10 |
 | Backend Framework | Spring Boot | 3.5.3 |
 | Build Tool | Gradle | 9.2.1 |
-| AI SDK | anthropic-java | 2.11.1 |
+| AI SDK | spring-ai-anthropic | 1.1.2 |
 | Database | PostgreSQL | 16.x |
 | Frontend Runtime | Node.js | 24 (LTS) |
 | Frontend Framework | React | 18.3.x |
