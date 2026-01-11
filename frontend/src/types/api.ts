@@ -50,12 +50,6 @@ export interface ChatHistoryResponse {
   messages: ChatMessage[];
 }
 
-export interface HealthResponse {
-  status: 'healthy' | 'unhealthy';
-  timestamp: string;
-  database?: 'connected' | 'disconnected';
-}
-
 export interface ErrorResponse {
   error: string;
   message: string;

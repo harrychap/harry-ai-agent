@@ -38,7 +38,7 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
 ## Tech Stack
 
 - **Backend**: Java 21, Spring Boot 3.5.3, Kotlin 2.1.10
-- **AI SDK**: Anthropic Java SDK 2.11.1
+- **AI SDK**: Spring AI Anthropic 1.1.2
 - **Frontend**: React 18, Vite 6, TypeScript
 - **Database**: PostgreSQL 16
 - **Build**: Gradle 9.2, Node 24

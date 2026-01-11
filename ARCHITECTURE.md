@@ -10,7 +10,7 @@ harry-ai-agent/
 │   ├── src/main/kotlin/com/example/agent/
 │   │   ├── Application.kt       # Main entry point
 │   │   ├── config/              # Configuration classes
-│   │   │   ├── AnthropicConfig.kt    # Claude SDK setup
+│   │   │   ├── AnthropicConfig.kt    # Spring AI ChatClient setup
 │   │   │   └── GlobalExceptionHandler.kt
 │   │   ├── controller/          # REST endpoints
 │   │   │   ├── ChatController.kt     # POST /api/chat
@@ -69,10 +69,10 @@ harry-ai-agent/
 
 | Layer | Technology | Version |
 |-------|------------|---------|
-| Backend Runtime | Java | 25 |
+| Backend Runtime | Java | 21 |
 | Backend Framework | Spring Boot | 3.5.3 |
 | Backend Language | Kotlin | 2.1.10 |
-| AI SDK | Anthropic Java | 2.11.1 |
+| AI SDK | Spring AI Anthropic | 1.1.2 |
 | Database | PostgreSQL | 16 |
 | Frontend Runtime | Node.js | 24 |
 | Frontend Framework | React | 18 |
@@ -179,11 +179,11 @@ Look for `TODO: AI` comments in these files:
 1. **AgentService.kt** (Primary)
    - `processMessage()` - Main entry point for AI logic
    - Inject `ShoppingItemService` to access shopping list
-   - Use Anthropic SDK to call Claude
+   - Use Spring AI ChatClient to call Claude
 
 2. **AnthropicConfig.kt**
-   - SDK configuration and examples
-   - Model selection and token limits
+   - Spring AI ChatClient configuration
+   - Model selection and default system prompt
 
 ### Recommended Implementation Steps
 

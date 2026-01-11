@@ -77,7 +77,7 @@ grep -r "TODO: AI" backend/src frontend/src
 |------|---------|
 | `backend/src/.../service/AgentService.kt` | Main AI agent integration point |
 | `backend/src/.../controller/ChatController.kt` | Chat endpoint handling |
-| `backend/src/.../config/AnthropicConfig.kt` | Anthropic SDK configuration |
+| `backend/src/.../config/AnthropicConfig.kt` | Spring AI ChatClient configuration |
 | `frontend/src/components/ChatWindow.tsx` | Chat UI component |
 | `ARCHITECTURE.md` | Full architecture documentation |
 

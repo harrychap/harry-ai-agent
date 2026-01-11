@@ -92,7 +92,7 @@ As a developer new to AI agents, I want commented instructions throughout the co
 - **FR-006**: Backend MUST include a health check endpoint
 - **FR-007**: Codebase MUST include instructional comments at all agent integration points
 - **FR-008**: Codebase MUST include a "TODO: AI" marker at every location requiring agent implementation
-- **FR-011**: Backend MUST include Anthropic SDK integration with stubbed agent calls ready for user implementation
+- **FR-011**: Backend MUST include Spring AI Anthropic integration with stubbed agent calls ready for user implementation
 - **FR-009**: System MUST include a project architecture guide explaining component relationships
 - **FR-010**: Frontend MUST display conversation history within a session
 
@@ -119,7 +119,7 @@ As a developer new to AI agents, I want commented instructions throughout the co
 
 ### Session 2026-01-11
 
-- Q: Should boilerplate include real AI SDK or mock responses only? → A: Include real Anthropic SDK with stubbed calls; user will provide API key
+- Q: Should boilerplate include real AI SDK or mock responses only? → A: Include Spring AI Anthropic with stubbed calls; user will provide API key
 - Q: How should duplicate item names be handled? → A: Merge duplicates by incrementing quantity
 
 ## Assumptions

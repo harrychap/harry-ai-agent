@@ -5,12 +5,12 @@
 
 ## Summary
 
-Create a learning-focused boilerplate for building an AI agent shopping list application. The system includes a Spring Boot/Kotlin backend with Anthropic SDK integration, a React frontend chatbot interface, and PostgreSQL database, all orchestrated via Docker Compose. The boilerplate provides working infrastructure with instructional "TODO: AI" markers where the user will implement their own agent logic.
+Create a learning-focused boilerplate for building an AI agent shopping list application. The system includes a Spring Boot/Kotlin backend with Spring AI Anthropic integration, a React frontend chatbot interface, and PostgreSQL database, all orchestrated via Docker Compose. The boilerplate provides working infrastructure with instructional "TODO: AI" markers where the user will implement their own agent logic.
 
 ## Technical Context
 
 **Language/Version**: Kotlin (Java 21), TypeScript/JavaScript (Node 24)
-**Primary Dependencies**: Spring Boot 3.x, React 18.x, Anthropic SDK for Java/Kotlin
+**Primary Dependencies**: Spring Boot 3.x, React 18.x, Spring AI Anthropic
 **Storage**: PostgreSQL (local via Docker)
 **Testing**: Optional per POC constitution (JUnit 5 if needed, Jest/Vitest if needed)
 **Target Platform**: Local development (Docker Compose on macOS/Linux/Windows)

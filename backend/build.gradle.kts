@@ -1,4 +1,4 @@
-plugins {
+ plugins {
     val kotlinVersion = "2.1.10"
     id("org.springframework.boot") version "3.5.3"
     id("io.spring.dependency-management") version "1.1.7"
@@ -18,6 +18,7 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
 }
 
 dependencies {
@@ -30,8 +31,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    // Anthropic SDK
-    implementation("com.anthropic:anthropic-java:2.11.1")
+    // Spring AI with Anthropic
+    implementation("org.springframework.ai:spring-ai-starter-model-anthropic:1.1.2")
 
     // Database
     runtimeOnly("org.postgresql:postgresql")
