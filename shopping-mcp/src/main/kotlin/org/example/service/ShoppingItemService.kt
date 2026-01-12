@@ -1,11 +1,11 @@
-package com.example.agent.service
+package org.example.service
 
-import com.example.agent.model.ShoppingItem
-import com.example.agent.repository.ShoppingItemRepository
+import org.example.model.ShoppingItem
+import org.example.repository.ShoppingItemRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.util.*
 
 /**
  * Service for managing shopping list items.
@@ -24,7 +24,7 @@ class ShoppingItemService(
      * Get all shopping items ordered by creation date.
      */
     fun getAllItems(): List<ShoppingItem> {
-        logger.debug("Fetching all shopping items")
+        logger.info("Fetching all shopping items")
         return shoppingItemRepository.findAllByOrderByCreatedAtDesc()
     }
 
@@ -69,7 +69,7 @@ class ShoppingItemService(
      * @return The item if found, null otherwise
      */
     fun getItem(id: UUID): ShoppingItem? {
-        logger.debug("Fetching item with id: {}", id)
+        logger.info("Fetching item with id: {}", id)
         return shoppingItemRepository.findById(id).orElse(null)
     }
 

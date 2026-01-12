@@ -52,3 +52,5 @@ replay_pid*
 # Java specific
 .mtj.tmp/
 *.ctxt
+/shopping-mcp/.gradle/
+/shopping-mcp/build/

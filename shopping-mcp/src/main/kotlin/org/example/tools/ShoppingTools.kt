@@ -1,6 +1,6 @@
-package com.example.agent.tools
+package org.example.tools
 
-import com.example.agent.service.ShoppingItemService
+import org.example.service.ShoppingItemService
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
 import org.springframework.stereotype.Component
@@ -13,6 +13,7 @@ class ShoppingTools(private val shoppingItemService: ShoppingItemService) {
         @ToolParam(description = "Name of the item to add") name: String,
         @ToolParam(description = "Quantity to add (default 1)") quantity: Int = 1
     ): String {
+
         val item = shoppingItemService.addItem(name, quantity)
         return "Added ${item.name} (quantity: ${item.quantity}) to your shopping list."
     }

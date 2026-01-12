@@ -4,7 +4,6 @@ import com.example.agent.dto.ChatMessageDto
 import com.example.agent.dto.ChatResponse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.util.*
 
@@ -14,7 +13,6 @@ class ChatService(
 ) {
     private val logger = LoggerFactory.getLogger(ChatService::class.java)
 
-    @Transactional
     fun sendMessage(userMessage: String): ChatResponse {
         logger.info("Processing message: messageLength=${userMessage.length}")
 

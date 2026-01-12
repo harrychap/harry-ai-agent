@@ -8,5 +8,3 @@ CREATE TABLE IF NOT EXISTS shopping_items (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_shopping_items_name ON shopping_items (LOWER(name));
-
-CREATE INDEX IF NOT EXISTS idx_chat_messages_session ON chat_messages (session_id, created_at);
