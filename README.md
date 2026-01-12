@@ -1,10 +1,17 @@
-# AI Shopping Assistant
+# AI Chat Assistant
 
-A learning project for building an AI-powered shopping assistant using Spring Boot, Kotlin, and React.
+A Spring Boot + Kotlin chat application with AI-powered responses using Anthropic Claude and in-memory conversation history.
 
 ## Overview
 
-This project provides boilerplate code for a chatbot application that manages a shopping list. The AI agent integration is stubbed out with instructional comments (`TODO: AI`) to guide you through implementing your own agent logic using the Anthropic Claude SDK.
+This project provides a chat interface that communicates with Claude via Spring AI. Conversations are stored in-memory, allowing the AI to maintain context across messages within a session.
+
+## Features
+
+- Chat interface with Claude AI
+- In-memory conversation history for context retention
+- MCP (Model Context Protocol) server support for tool integration
+- React frontend with real-time messaging
 
 ## Quick Start
 
@@ -15,7 +22,7 @@ cd harry-ai-agent
 # 2. Copy environment template
 cp .env.example .env
 
-# 3. (Optional) Add your Anthropic API key
+# 3. Add your Anthropic API key
 # Edit .env and set ANTHROPIC_API_KEY=sk-ant-xxxxx
 
 # 4. Start all services
@@ -33,14 +40,14 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
 |-----------|-------------|
 | `backend/` | Spring Boot + Kotlin API server |
 | `frontend/` | React + TypeScript chat UI |
-| `specs/` | Feature specifications |
+| `shopping-mcp/` | MCP server for tool integration |
 
 ## Tech Stack
 
 - **Backend**: Java 21, Spring Boot 3.5.3, Kotlin 2.1.10
 - **AI SDK**: Spring AI Anthropic 1.1.2
+- **Chat Memory**: In-Memory (ConcurrentHashMap)
 - **Frontend**: React 18, Vite 6, TypeScript
-- **Database**: PostgreSQL 16
 - **Build**: Gradle 9.2, Node 24
 - **Infrastructure**: Docker Compose
 
@@ -50,24 +57,26 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
 |--------|------|-------------|
 | GET | /api/health | Health check |
 | POST | /api/chat | Send message to AI |
-| GET | /api/chat/{id}/history | Get chat history |
-| GET | /api/items | List shopping items |
-| POST | /api/items | Add item |
-| PUT | /api/items/{id} | Update item |
-| DELETE | /api/items/{id} | Remove item |
 
-## Implementing the AI Agent
+## Chat Memory
 
-Search for `TODO: AI` comments in the codebase to find integration points:
+The application uses `InMemoryChatMemoryRepository` to store conversation history:
 
-```bash
-grep -r "TODO: AI" backend/
-```
+- Messages persist for the lifetime of the application
+- Thread-safe using ConcurrentHashMap
+- Supports multiple concurrent conversations
+- No external database required
 
-Key files:
-- `AgentService.kt` - Main AI logic (implement here!)
-- `AnthropicConfig.kt` - SDK configuration
-- `ChatController.kt` - Request handling
+**Note**: Conversation history is lost on application restart. For persistent storage, implement a database-backed `ChatMemoryRepository`.
+
+## Key Files
+
+| File | Description |
+|------|-------------|
+| `AgentService.kt` | AI integration with Claude |
+| `AnthropicConfig.kt` | Spring AI configuration |
+| `InMemoryChatMemoryRepository.kt` | Conversation storage |
+| `ChatService.kt` | Request handling |
 
 ## Development
 

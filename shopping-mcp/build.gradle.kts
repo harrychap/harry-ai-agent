@@ -7,8 +7,8 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
 }
 
-group = "com.example"
-version = "1.0.0-SNAPSHOT"
+group = "org.example"
+version = "1.0-SNAPSHOT"
 
 java {
     toolchain {
@@ -23,20 +23,31 @@ repositories {
 
 dependencies {
     // Spring Boot
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+//    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    // Spring AI with Anthropic
-    implementation("org.springframework.ai:spring-ai-starter-model-anthropic:1.1.2")
-    implementation("org.springframework.ai:spring-ai-starter-mcp-client:1.1.2")
+    // Spring AI MCP
+    implementation("org.springframework.ai:spring-ai-starter-mcp-server-webmvc:1.1.2")
+
+    // Database
+    runtimeOnly("org.postgresql:postgresql")
+
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+// Required for JPA entities to work with lazy loading
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.MappedSuperclass")
+    annotation("jakarta.persistence.Embeddable")
 }
 
 kotlin {

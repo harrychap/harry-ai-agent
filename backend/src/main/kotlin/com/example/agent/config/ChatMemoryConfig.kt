@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 
 
 @Configuration
-class AnthropicConfig {
+class ChatMemoryConfig {
     @Bean
     fun chatMemory(chatMemoryRepository: ChatMemoryRepository): ChatMemory = MessageWindowChatMemory.builder()
         .chatMemoryRepository(chatMemoryRepository)

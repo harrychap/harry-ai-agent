@@ -1,6 +1,6 @@
 # Architecture Guide
 
-This document provides a comprehensive overview of the AI Shopping Assistant architecture.
+This document provides a comprehensive overview of the AI Chat Assistant architecture.
 
 ## Project Structure
 
@@ -10,32 +10,21 @@ harry-ai-agent/
 │   ├── src/main/kotlin/com/example/agent/
 │   │   ├── Application.kt       # Main entry point
 │   │   ├── config/              # Configuration classes
-│   │   │   ├── AnthropicConfig.kt    # Spring AI ChatClient setup
-│   │   │   └── GlobalExceptionHandler.kt
+│   │   │   ├── AnthropicConfig.kt           # Spring AI ChatClient setup
+│   │   │   ├── GlobalExceptionHandler.kt    # Error handling
+│   │   │   └── InMemoryChatMemoryRepository.kt  # Chat history storage
 │   │   ├── controller/          # REST endpoints
 │   │   │   ├── ChatController.kt     # POST /api/chat
-│   │   │   ├── HealthController.kt   # GET /api/health
-│   │   │   └── ShoppingItemController.kt  # CRUD /api/items
+│   │   │   └── HealthController.kt   # GET /api/health
 │   │   ├── dto/                 # Request/Response objects
 │   │   │   ├── ChatDtos.kt
-│   │   │   ├── HealthDtos.kt
-│   │   │   └── ShoppingItemDtos.kt
-│   │   ├── model/               # JPA entities
-│   │   │   ├── ChatMessage.kt
-│   │   │   ├── ChatSession.kt
-│   │   │   └── ShoppingItem.kt
-│   │   ├── repository/          # Spring Data repositories
-│   │   │   ├── ChatMessageRepository.kt
-│   │   │   ├── ChatSessionRepository.kt
-│   │   │   └── ShoppingItemRepository.kt
+│   │   │   └── HealthDtos.kt
 │   │   └── service/             # Business logic
-│   │       ├── AgentService.kt       # TODO: AI - Main integration point
-│   │       ├── ChatService.kt        # Session & message management
-│   │       └── ShoppingItemService.kt
+│   │       ├── AgentService.kt       # AI integration with Claude
+│   │       └── ChatService.kt        # Message handling
 │   ├── src/main/resources/
 │   │   ├── application.yml      # App configuration
-│   │   ├── logback-spring.xml   # Logging config
-│   │   └── schema.sql           # Database schema
+│   │   └── logback-spring.xml   # Logging config
 │   ├── build.gradle.kts         # Gradle build file
 │   └── Dockerfile
 │
@@ -73,7 +62,7 @@ harry-ai-agent/
 | Backend Framework | Spring Boot | 3.5.3 |
 | Backend Language | Kotlin | 2.1.10 |
 | AI SDK | Spring AI Anthropic | 1.1.2 |
-| Database | PostgreSQL | 16 |
+| Chat Memory | In-Memory (ConcurrentHashMap) | - |
 | Frontend Runtime | Node.js | 24 |
 | Frontend Framework | React | 18 |
 | Build Tool (Frontend) | Vite | 6 |
@@ -85,64 +74,64 @@ harry-ai-agent/
 ### Chat Message Flow
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Browser   │────>│  Frontend   │────>│   Backend   │────>│  Database   │
-│             │<────│   (React)   │<────│  (Spring)   │<────│ (PostgreSQL)│
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Browser   │────>│  Frontend   │────>│   Backend   │
+│             │<────│   (React)   │<────│  (Spring)   │
+└─────────────┘     └─────────────┘     └─────────────┘
                                                │
-                                               v
-                                        ┌─────────────┐
-                                        │  Anthropic  │
-                                        │     API     │
-                                        └─────────────┘
+                           ┌───────────────────┼───────────────────┐
+                           │                   │                   │
+                           v                   v                   v
+                    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+                    │  Anthropic  │     │ ChatMemory  │     │   MCP       │
+                    │     API     │     │ Repository  │     │  Servers    │
+                    └─────────────┘     └─────────────┘     └─────────────┘
 ```
 
 1. User types message in MessageInput component
 2. useChat hook sends POST /api/chat
 3. ChatController receives request
-4. ChatService creates/retrieves session
-5. ChatService saves user message
-6. AgentService calls Anthropic API (TODO: AI)
-7. ChatService saves assistant response
+4. ChatService delegates to AgentService
+5. AgentService retrieves conversation history from ChatMemoryRepository
+6. AgentService calls Anthropic API with context
+7. ChatMemoryRepository stores user and assistant messages
 8. Response returns through stack
 9. ChatWindow displays new messages
 
-### Shopping Item Flow
+## Chat Memory System
 
+### InMemoryChatMemoryRepository
+
+The application uses an in-memory chat memory system to maintain conversation context:
+
+```kotlin
+class InMemoryChatMemoryRepository : ChatMemoryRepository {
+    private val conversations = ConcurrentHashMap<String, MutableList<Message>>()
+
+    // Find all active conversation IDs
+    fun findConversationIds(): List<String>
+
+    // Retrieve messages for a conversation
+    fun findByConversationId(conversationId: String?): List<Message>
+
+    // Save/update messages for a conversation
+    fun saveAll(conversationId: String?, messages: List<Message?>?)
+
+    // Delete a conversation's history
+    fun deleteByConversationId(conversationId: String?)
+}
 ```
-Frontend                  Backend                    Database
-   │                         │                          │
-   │  POST /api/items        │                          │
-   │────────────────────────>│                          │
-   │                         │  INSERT/UPDATE           │
-   │                         │─────────────────────────>│
-   │                         │                          │
-   │  ShoppingItemResponse   │                          │
-   │<────────────────────────│                          │
-```
 
-## Database Schema
+**Key characteristics:**
+- Thread-safe using `ConcurrentHashMap`
+- Messages persist for the lifetime of the application
+- No external database required
+- Ideal for development and single-instance deployments
 
-### Tables
-
-**shopping_items**
-- `id` (UUID, PK) - Unique identifier
-- `name` (VARCHAR 255, UNIQUE) - Item name
-- `quantity` (INT) - How many needed
-- `created_at` (TIMESTAMP) - When added
-- `updated_at` (TIMESTAMP) - Last modified
-
-**chat_sessions**
-- `id` (UUID, PK) - Session identifier
-- `created_at` (TIMESTAMP) - Session start
-- `updated_at` (TIMESTAMP) - Last activity
-
-**chat_messages**
-- `id` (UUID, PK) - Message identifier
-- `session_id` (UUID, FK) - Parent session
-- `role` (VARCHAR 20) - 'user' or 'assistant'
-- `content` (TEXT) - Message text
-- `created_at` (TIMESTAMP) - When sent
+**Limitations:**
+- Data is lost on application restart
+- Not suitable for multi-instance deployments
+- Memory usage grows with conversation history
 
 ## API Endpoints
 
@@ -151,18 +140,6 @@ Frontend                  Backend                    Database
 | Method | Path | Description |
 |--------|------|-------------|
 | POST | /api/chat | Send message to agent |
-| GET | /api/chat/{sessionId}/history | Get session messages |
-
-### Shopping Items
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | /api/items | List all items |
-| POST | /api/items | Add item (merges duplicates) |
-| GET | /api/items/{id} | Get single item |
-| PUT | /api/items/{id} | Update quantity |
-| DELETE | /api/items/{id} | Remove item |
-| DELETE | /api/items | Clear all items |
 
 ### Health
 
@@ -170,34 +147,33 @@ Frontend                  Backend                    Database
 |--------|------|-------------|
 | GET | /api/health | Service health check |
 
-## Key Integration Points
+## Key Components
 
-### Where to Implement AI Logic
+### AgentService
 
-Look for `TODO: AI` comments in these files:
+The main integration point for AI logic:
+- Configures ChatClient with memory advisor
+- Sends messages to Anthropic Claude API
+- Manages conversation context via ChatMemoryRepository
 
-1. **AgentService.kt** (Primary)
-   - `processMessage()` - Main entry point for AI logic
-   - Inject `ShoppingItemService` to access shopping list
-   - Use Spring AI ChatClient to call Claude
+### AnthropicConfig
 
-2. **AnthropicConfig.kt**
-   - Spring AI ChatClient configuration
-   - Model selection and default system prompt
+Spring AI configuration:
+- ChatClient bean setup
+- Model selection (claude-sonnet-4-20250514)
+- ChatMemory and ChatMemoryRepository beans
+- System prompt configuration
 
-### Recommended Implementation Steps
+### ChatService
 
-1. Uncomment `ShoppingItemService` injection in `AgentService`
-2. Define a system prompt for the shopping assistant
-3. Implement tool definitions for shopping operations
-4. Parse user messages and execute appropriate actions
-5. Format responses in a friendly way
+Request/response handling:
+- Creates DTOs for frontend communication
+- Delegates AI processing to AgentService
 
 ## Docker Services
 
 | Service | Port | Description |
 |---------|------|-------------|
-| db | 5432 | PostgreSQL database |
 | backend | 8080 | Spring Boot API |
 | frontend | 5173 | Vite dev server / Nginx |
 
@@ -207,7 +183,7 @@ Look for `TODO: AI` comments in these files:
 # Copy environment template
 cp .env.example .env
 
-# Add your API key (optional for development)
+# Add your API key
 # Edit .env and set ANTHROPIC_API_KEY=sk-ant-xxxxx
 
 # Start all services
@@ -226,17 +202,13 @@ docker compose down
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| ANTHROPIC_API_KEY | No | Claude API key (placeholder mode if missing) |
-| POSTGRES_USER | Yes | Database username (default: agent) |
-| POSTGRES_PASSWORD | Yes | Database password (default: agent) |
-| POSTGRES_DB | Yes | Database name (default: agent_db) |
+| ANTHROPIC_API_KEY | Yes | Claude API key |
 
 ### Application Properties
 
 Located in `backend/src/main/resources/application.yml`:
 
 - Server port: 8080
-- Database connection pooling
 - Anthropic model configuration
 - Logging levels
 
@@ -251,12 +223,21 @@ For frontend changes, Vite provides hot module replacement.
 
 ## Extending the Application
 
-### Adding New Tools for the Agent
+### Adding Persistent Chat Memory
 
-1. Define tool schema in `AgentService.kt`
-2. Create corresponding service method
-3. Handle tool_use responses from Claude
-4. Execute the tool and return results
+To persist conversations across restarts, implement `ChatMemoryRepository` with a database:
+
+1. Add database dependency (e.g., Spring Data JPA)
+2. Create a `JpaChatMemoryRepository` implementation
+3. Replace the `InMemoryChatMemoryRepository` bean
+
+### Adding MCP Server Integration
+
+The architecture supports Model Context Protocol (MCP) servers for tool integration:
+
+1. Configure MCP servers in application.yml
+2. Register tools with the ChatClient
+3. Handle tool execution in AgentService
 
 ### Adding New API Endpoints
 
@@ -265,9 +246,3 @@ For frontend changes, Vite provides hot module replacement.
 3. Create service in `service/` package
 4. Update TypeScript types in `frontend/src/types/api.ts`
 5. Add API client method in `frontend/src/services/api.ts`
-
-### Adding New React Components
-
-1. Create component in `frontend/src/components/`
-2. Add styles to `App.css` or create component-specific CSS
-3. Import and use in parent component
