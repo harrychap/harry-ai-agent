@@ -1,6 +1,6 @@
-package org.example.repository
+package com.example.mcp.repository
 
-import org.example.model.ShoppingItem
+import com.example.mcp.model.ShoppingItem
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository

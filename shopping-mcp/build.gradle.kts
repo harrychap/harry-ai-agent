@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
 }
 
-group = "org.example"
+group = "com.example"
 version = "1.0-SNAPSHOT"
 
 java {

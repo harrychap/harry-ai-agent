@@ -1,7 +1,7 @@
-package org.example.service
+package com.example.mcp.service
 
-import org.example.model.ShoppingItem
-import org.example.repository.ShoppingItemRepository
+import com.example.mcp.model.ShoppingItem
+import com.example.mcp.repository.ShoppingItemRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

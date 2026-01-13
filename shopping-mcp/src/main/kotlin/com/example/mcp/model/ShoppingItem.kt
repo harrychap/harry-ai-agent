@@ -1,8 +1,8 @@
-package org.example.model
+package com.example.mcp.model
 
 import jakarta.persistence.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "shopping_items")

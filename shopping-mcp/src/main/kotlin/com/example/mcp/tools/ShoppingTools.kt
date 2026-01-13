@@ -1,6 +1,6 @@
-package org.example.tools
+package com.example.mcp.tools
 
-import org.example.service.ShoppingItemService
+import com.example.mcp.service.ShoppingItemService
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
 import org.springframework.stereotype.Component
