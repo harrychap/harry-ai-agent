@@ -1,4 +1,4 @@
-package example.com.example.mcp
+package com.example.mcp
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -22,16 +22,18 @@ repositories {
 }
 
 dependencies {
-    // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    // Spring AI with Anthropic
-    implementation("org.springframework.ai:spring-ai-starter-model-anthropic:1.1.2")
+    // Spring AI Anthropic
+//    implementation("org.springframework.ai:spring-ai-starter-model-anthropic:1.1.2")
+
+    // Spring AI Ollama (Local Model)
+    implementation("org.springframework.ai:spring-ai-starter-model-ollama:1.1.2")
+
     implementation("org.springframework.ai:spring-ai-starter-mcp-client:1.1.2")
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")

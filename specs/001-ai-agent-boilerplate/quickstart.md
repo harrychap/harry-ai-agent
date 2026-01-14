@@ -7,34 +7,32 @@ This guide walks you through getting the AI Agent Shopping List boilerplate runn
 Before you begin, ensure you have:
 
 - [ ] **Docker Desktop** installed and running ([Download](https://www.docker.com/products/docker-desktop/))
-- [ ] **Anthropic API Key** from [console.anthropic.com](https://console.anthropic.com/)
 - [ ] **Git** installed for cloning the repository
+- [ ] ~8GB disk space for Ollama model download
 
-## Step 1: Clone and Configure
+> **Note**: No API key required! The default setup uses Ollama with Llama 3.2 running locally.
+
+## Step 1: Clone the Repository
 
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd harry-ai-agent
-
-# Copy environment template
-cp .env.example .env
-
-# Edit .env and add your Anthropic API key
-# ANTHROPIC_API_KEY=sk-ant-...
 ```
 
 ## Step 2: Start the Stack
 
 ```bash
-# Start all services (backend, frontend, database)
+# Start all services (backend, frontend, database, ollama)
 docker compose up -d
 
-# Watch the logs (optional)
-docker compose logs -f
+# Watch Ollama download the model (first run only, ~2GB)
+docker compose logs -f ollama
 ```
 
-**Expected startup time**: Under 2 minutes
+**Expected startup time**:
+- First run: 3-5 minutes (model download)
+- Subsequent runs: Under 2 minutes
 
 ## Step 3: Verify Services
 
@@ -44,7 +42,19 @@ Once started, verify each service is healthy:
 |---------|-----|----------|
 | Frontend (Chat UI) | http://localhost:5173 | Chat interface loads |
 | Backend API | http://localhost:8080/api/health | `{"status":"healthy"}` |
+| Ollama | (internal) | Model loaded |
 | PostgreSQL | localhost:5432 | (internal, no browser access) |
+
+### Check Ollama Model Status
+
+```bash
+# Verify model is downloaded
+docker compose exec ollama ollama list
+
+# Expected output:
+# NAME               ID              SIZE      MODIFIED
+# llama3.2:latest    a80c4f17acd5    2.0 GB    ...
+```
 
 ### Quick Health Check
 
@@ -76,8 +86,9 @@ grep -r "TODO: AI" backend/src frontend/src
 | File | Purpose |
 |------|---------|
 | `backend/src/.../service/AgentService.kt` | Main AI agent integration point |
+| `backend/src/.../ai/ShoppingChatClient.kt` | Chat client with MCP tool integration |
 | `backend/src/.../controller/ChatController.kt` | Chat endpoint handling |
-| `backend/src/.../config/AnthropicConfig.kt` | Spring AI ChatClient configuration |
+| `shopping-mcp/src/.../tools/ShoppingTools.kt` | MCP tool definitions |
 | `frontend/src/components/ChatWindow.tsx` | Chat UI component |
 | `ARCHITECTURE.md` | Full architecture documentation |
 
@@ -126,11 +137,36 @@ docker compose ps
 docker compose logs db
 ```
 
-### API key not working
+### Ollama model not found
 
-1. Verify your `.env` file contains: `ANTHROPIC_API_KEY=sk-ant-...`
-2. Restart the backend: `docker compose restart backend`
-3. Check backend logs: `docker compose logs backend`
+If you see `model 'llama3.2' not found` errors:
+
+```bash
+# Check if model is still downloading
+docker compose logs ollama
+
+# Manually pull the model if needed
+docker compose exec ollama ollama pull llama3.2
+
+# Restart backend after model is ready
+docker compose restart backend
+```
+
+### Using Anthropic Claude Instead
+
+To switch to Anthropic Claude (requires API key):
+
+1. Edit `backend/build.gradle.kts`:
+   - Comment out: `spring-ai-starter-model-ollama`
+   - Uncomment: `spring-ai-starter-model-anthropic`
+
+2. Create `.env` with your API key:
+   ```bash
+   cp .env.example .env
+   # Edit .env: ANTHROPIC_API_KEY=sk-ant-...
+   ```
+
+3. Rebuild: `docker compose build backend && docker compose up -d backend`
 
 ## Next Steps
 

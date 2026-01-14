@@ -1,5 +1,19 @@
 services:
-  # PostgreSQL Database
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        /bin/ollama serve &
+        sleep 5
+        ollama pull llama3.2
+        wait
+
   db:
     image: postgres:16-alpine
     container_name: shopping-agent-db
@@ -28,6 +42,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      ollama:
+        condition: service_started
       shopping-mcp:
         condition: service_healthy
 
@@ -73,3 +89,4 @@ services:
 
 volumes:
   postgres_data:
+  ollama_data:
