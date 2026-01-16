@@ -7,17 +7,6 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 
-/**
- * Component responsible for initializing the vector store with documents on startup.
- *
- * This component implements CommandLineRunner to execute after the Spring context
- * is fully initialized. It loads documents from the CSV file and adds them to
- * the vector store for semantic search.
- *
- * TODO: [EXTENSION POINT] - Implement the following for your use case:
- *   - shouldInitialize(): Control when to re-index
- *   - onInitializationComplete(): Post-initialization hooks
- */
 @Component
 class VectorStoreInitializer(
     private val csvDocumentLoader: CsvDocumentLoader,
