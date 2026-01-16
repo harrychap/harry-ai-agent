@@ -21,6 +21,13 @@ repositories {
     maven { url = uri("https://repo.spring.io/milestone") }
 }
 
+// Spring AI BOM for consistent dependency versions
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.ai:spring-ai-bom:1.1.2")
+    }
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -35,6 +42,13 @@ dependencies {
     implementation("org.springframework.ai:spring-ai-starter-model-ollama:1.1.2")
 
     implementation("org.springframework.ai:spring-ai-starter-mcp-client:1.1.2")
+
+    // Spring AI RAG - PGVector for vector storage
+    implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
+
+    // Database (for PGVector)
+    runtimeOnly("org.postgresql:postgresql")
+
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

@@ -1,0 +1,6 @@
+id,name,description,category
+1,Spring Boot,Spring Boot is a Java-based framework for building production-ready applications with minimal configuration. It provides auto-configuration and embedded servers.,framework
+2,Spring AI,Spring AI is an application framework for AI engineering that brings Spring ecosystem design principles to AI applications. It supports various AI models and vector stores.,framework
+3,PGVector,PGVector is a PostgreSQL extension for vector similarity search. It enables storing and querying embeddings for machine learning applications.,database
+4,RAG,Retrieval-Augmented Generation (RAG) is a technique that combines retrieval of relevant documents with generative AI to produce more accurate and contextual responses.,technique
+5,Ollama,Ollama is a tool for running large language models locally. It supports various models including Llama and provides an easy-to-use API for inference.,tool
