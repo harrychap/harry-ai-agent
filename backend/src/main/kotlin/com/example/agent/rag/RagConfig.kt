@@ -6,20 +6,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import jakarta.annotation.PostConstruct
 
-/**
- * Configuration class for the RAG (Retrieval-Augmented Generation) system.
- *
- * This class enables the RagProperties configuration and validates
- * the RAG setup on application startup.
- *
- * The VectorStore bean is auto-configured by Spring AI's PGVector starter
- * based on the spring.ai.vectorstore.pgvector.* properties.
- *
- * TODO: [EXTENSION POINT] - Add custom beans here if needed:
- *   - Custom DocumentTransformer for preprocessing
- *   - Custom SearchRequest builder
- *   - Custom EmbeddingModel configuration
- */
+
 @Configuration
 @EnableConfigurationProperties(RagProperties::class)
 class RagConfig(

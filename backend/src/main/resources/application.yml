@@ -2,36 +2,20 @@ spring:
   application:
     name: ai-agent-backend
 
-  # ==========================================================================
-  # Database Configuration (for PGVector)
-  # ==========================================================================
   datasource:
     url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:rag_store}
     username: ${DB_USER:postgres}
     password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
-  # ==========================================================================
-  # Spring AI Configuration
-  # ==========================================================================
   ai:
-    # PGVector Store Configuration
     vectorstore:
       pgvector:
-        # Index type: NONE, IVFFlat, or HNSW (recommended for performance)
         index-type: HNSW
-        # Distance calculation: COSINE_DISTANCE, EUCLIDEAN_DISTANCE, or NEGATIVE_INNER_PRODUCT
         distance-type: COSINE_DISTANCE
-        # Vector dimensions - MUST match your embedding model:
-        #   - Ollama nomic-embed-text: 768
-        #   - Ollama mxbai-embed-large: 1024
-        #   - OpenAI text-embedding-ada-002: 1536
-        # TODO: [EXTENSION POINT] - Change dimensions to match your embedding model
         dimensions: 768
-        # Auto-create vector_store table on startup
         initialize-schema: true
 
-    # Ollama Configuration (chat + embeddings)
     ollama:
       base-url: http://${OLLAMA_HOST:ollama}:11434
       chat:
@@ -40,10 +24,7 @@ spring:
           max-tokens: 1024
           temperature: 0.7
       embedding:
-        # TODO: [EXTENSION POINT] - Change embedding model as needed
         model: nomic-embed-text
-
-    # MCP Client Configuration
     mcp:
       client:
         sse:
@@ -65,24 +46,9 @@ server:
   servlet:
     context-path: /api
 
-logging:
-  level:
-    root: INFO
-    com.example.agent: DEBUG
-    com.example.agent.rag: DEBUG
-    org.springframework.ai: INFO
-    org.springframework.web: INFO
-
-# =============================================================================
-# RAG Configuration (Custom Properties)
-# =============================================================================
 rag:
   csv:
-    # Path to the CSV knowledge base file
-    # TODO: [EXTENSION POINT] - Change to your CSV file path
     path: classpath:data/knowledge.csv
   vectorstore:
-    # Number of results to return from similarity search
     top-k: 5
-    # Minimum similarity score (0.0 to 1.0) for results
     similarity-threshold: 0.7

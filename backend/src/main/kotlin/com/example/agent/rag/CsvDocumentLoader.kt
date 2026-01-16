@@ -8,17 +8,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.time.Instant
 
-/**
- * Service responsible for loading and parsing CSV files into Spring AI Documents.
- *
- * This service reads a CSV file from the configured path and converts each row
- * into a Document object suitable for embedding and storage in the vector store.
- *
- * TODO: [EXTENSION POINT] - Implement the following methods to customize behavior:
- *   - formatRowAsContent(): How CSV rows become searchable text
- *   - extractMetadata(): What metadata to attach to each document
- *   - shouldIncludeRow(): Filter which rows to include
- */
 @Service
 class CsvDocumentLoader(
     private val ragProperties: RagProperties,
@@ -26,11 +15,6 @@ class CsvDocumentLoader(
 ) {
     private val logger = LoggerFactory.getLogger(CsvDocumentLoader::class.java)
 
-    /**
-     * Load documents from the configured CSV resource.
-     *
-     * @return List of Document objects ready for embedding
-     */
     fun loadDocuments(): List<Document> {
         val csvPath = ragProperties.csv.path
         logger.info("Loading CSV from: $csvPath")
@@ -55,7 +39,7 @@ class CsvDocumentLoader(
                         } else {
                             val values = parseCsvLine(line)
                             if (values.isNotEmpty() && headers != null) {
-                                val record = headers!!.zip(values).toMap()
+                                val record = headers.zip(values).toMap()
                                 val document = createDocument(record, index, csvPath)
                                 documents.add(document)
                             }
@@ -86,18 +70,7 @@ class CsvDocumentLoader(
         return Document(content, metadata)
     }
 
-    /**
-     * Format a CSV row as searchable text content.
-     *
-     * TODO: [EXTENSION POINT] - Customize content formatting for your CSV schema
-     *
-     * Example:
-     * ```kotlin
-     * return "${record["name"]}: ${record["description"]} (Category: ${record["category"]})"
-     * ```
-     */
     private fun formatRowAsContent(record: Map<String, String>): String {
-        // TODO: [EXTENSION POINT] - Implement based on your CSV structure
         return record.entries
             .filter { it.value.isNotBlank() }
             .joinToString(" | ") { "${it.key}: ${it.value}" }

@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.ai.document.Document
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.boot.CommandLineRunner
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 
 /**
@@ -20,7 +21,8 @@ import org.springframework.stereotype.Component
 @Component
 class VectorStoreInitializer(
     private val csvDocumentLoader: CsvDocumentLoader,
-    private val vectorStore: VectorStore
+    private val vectorStore: VectorStore,
+    private val jdbcTemplate: JdbcTemplate
 ) : CommandLineRunner {
 
     private val logger = LoggerFactory.getLogger(VectorStoreInitializer::class.java)
@@ -40,6 +42,9 @@ class VectorStoreInitializer(
     }
 
     fun initialize() {
+        logger.info("Clearing existing vector store data...")
+        jdbcTemplate.execute("TRUNCATE TABLE vector_store")
+
         logger.info("Loading documents from CSV...")
         val documents = csvDocumentLoader.loadDocuments()
 

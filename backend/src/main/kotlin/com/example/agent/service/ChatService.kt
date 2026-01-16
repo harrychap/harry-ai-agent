@@ -34,7 +34,6 @@ class ChatService(
 
             )
 
-
         return ChatResponse(
             userMessage = userChatMessage.toDto(),
             assistantMessage = assistantMessage.toDto()

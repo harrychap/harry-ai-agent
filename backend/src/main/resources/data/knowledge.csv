@@ -1,6 +1,11 @@
 id,name,description,category
-1,Spring Boot,Spring Boot is a Java-based framework for building production-ready applications with minimal configuration. It provides auto-configuration and embedded servers.,framework
-2,Spring AI,Spring AI is an application framework for AI engineering that brings Spring ecosystem design principles to AI applications. It supports various AI models and vector stores.,framework
-3,PGVector,PGVector is a PostgreSQL extension for vector similarity search. It enables storing and querying embeddings for machine learning applications.,database
-4,RAG,Retrieval-Augmented Generation (RAG) is a technique that combines retrieval of relevant documents with generative AI to produce more accurate and contextual responses.,technique
-5,Ollama,Ollama is a tool for running large language models locally. It supports various models including Llama and provides an easy-to-use API for inference.,tool
+1,Produce Storage,Fresh fruits and vegetables should be stored properly. Keep bananas separate as they release ethylene gas. Store leafy greens in airtight containers with paper towels. Tomatoes taste best at room temperature.,tips
+2,Meat Safety,Raw meat should be stored on the bottom shelf of the refrigerator to prevent cross-contamination. Use within 2-3 days of purchase or freeze for longer storage. Always check use-by dates.,tips
+3,Pantry Staples,Essential pantry items include rice and pasta and canned tomatoes and olive oil and flour and sugar and salt and pepper and garlic and onions and dried herbs. Keep these stocked for quick meals.,shopping
+4,Dairy Products,Milk and dairy products should be stored at 40°F or below. Check expiration dates regularly. Eggs can last 3-5 weeks in the refrigerator when properly stored.,tips
+5,Meal Planning,Plan your meals for the week before shopping. Check what you already have at home. Make a list organized by store sections such as produce and dairy and meat and frozen and pantry.,tips
+6,Budget Shopping,Compare unit prices rather than package prices. Buy seasonal produce for better prices. Consider store brands which are often the same quality as name brands.,tips
+7,Frozen Foods,Frozen vegetables are just as nutritious as fresh and last longer. Keep a stock of frozen fruits for smoothies. Bread can be frozen for up to 3 months.,tips
+8,Organic Produce,The Dirty Dozen foods to buy organic include strawberries and spinach and kale and grapes and peaches and pears and apples and tomatoes and celery and potatoes and bell peppers.,shopping
+9,Unit Conversions,Common conversions: 1 cup equals 240ml and 1 tablespoon equals 15ml and 1 pound equals 454g and 1 ounce equals 28g. Use these when following recipes from different countries.,reference
+10,Seasonal Produce,Spring produce includes asparagus and peas and strawberries. Summer has tomatoes and corn and berries. Fall brings apples and squash and pumpkin. Winter offers citrus and root vegetables and cabbage.,shopping
