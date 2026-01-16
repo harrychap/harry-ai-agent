@@ -76,11 +76,6 @@ class CsvDocumentLoader(
             .joinToString(" | ") { "${it.key}: ${it.value}" }
     }
 
-    /**
-     * Extract metadata from a CSV record.
-     *
-     * TODO: [EXTENSION POINT] - Add domain-specific metadata from your CSV columns
-     */
     private fun extractMetadata(
         record: Map<String, String>,
         rowNumber: Int,
@@ -91,7 +86,6 @@ class CsvDocumentLoader(
             "rowNumber" to rowNumber,
             "timestamp" to Instant.now().toString()
         )
-        // TODO: [EXTENSION POINT] - Add fields from your CSV schema
         return metadata
     }
 }
