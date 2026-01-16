@@ -2,37 +2,37 @@ spring:
   application:
     name: ai-agent-backend
 
-server:
-  port: 8080
-  servlet:
-    context-path: /api
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:rag_store}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
 
-logging:
-  level:
-    root: INFO
-    com.example.agent: DEBUG
-    org.springframework.ai: DEBUG
-    org.springframework.web: INFO
-    org.hibernate.SQL: INFO
+  ai:
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 768
+        initialize-schema: true
 
-spring.ai:
-  mcp:
-    client:
-      sse:
-        connections:
-          shopping-list:
-            url: http://shopping-mcp:8081
+    ollama:
+      base-url: http://${OLLAMA_HOST:ollama}:11434
+      chat:
+        options:
+          model: llama3.2
+          max-tokens: 1024
+          temperature: 0.7
+      embedding:
+        model: nomic-embed-text
+    mcp:
+      client:
+        sse:
+          connections:
+            shopping-list:
+              url: http://shopping-mcp:8081
 
-# FOR USE WITH OLLAMA LOCAL MODEL
-  ollama:
-    base-url: http://ollama:11434
-    chat:
-      options:
-        model: llama3.2
-        max-tokens: 1024
-        temperature: 0.7
-
-# FOR USE WITH ANTHROPIC API
+# FOR USE WITH ANTHROPIC API (uncomment to use)
 #  anthropic:
 #    api-key: ${ANTHROPIC_API_KEY:}
 #    chat:
@@ -40,3 +40,15 @@ spring.ai:
 #        model: claude-sonnet-4-20250514
 #        max-tokens: 1024
 #        temperature: 0.7
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+rag:
+  csv:
+    path: classpath:data/knowledge.csv
+  vectorstore:
+    top-k: 5
+    similarity-threshold: 0.7

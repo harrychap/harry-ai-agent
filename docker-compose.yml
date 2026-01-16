@@ -12,10 +12,11 @@ services:
         /bin/ollama serve &
         sleep 5
         ollama pull llama3.2
+        ollama pull nomic-embed-text
         wait
 
   db:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     container_name: shopping-agent-db
     environment:
       POSTGRES_USER: postgres
@@ -25,6 +26,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d shopping_list"]
       interval: 10s
@@ -37,11 +39,18 @@ services:
       dockerfile: Dockerfile
     container_name: shopping-agent-backend
     environment:
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+#      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: rag_store
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      OLLAMA_HOST: ollama
     ports:
       - "8080:8080"
     depends_on:
+      db:
+        condition: service_healthy
       ollama:
         condition: service_started
       shopping-mcp:

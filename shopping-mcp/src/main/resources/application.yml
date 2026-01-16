@@ -31,5 +31,3 @@ logging:
     com.example.agent: INFO
     org.springframework.web: INFO
     org.hibernate.SQL: INFO
-
-
